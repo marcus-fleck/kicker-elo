@@ -157,12 +157,14 @@ int scrapeTournament(Database *db, int tfvbId, TournamentSource src, GumboOutput
     int pos = 0;
     for (int i = potentialMatches.size() - 1; i >= 0; --i) {
         GumboElement *elem = potentialMatches[i];
-        const QVector<GumboElement*> tbodies = collectElements(elem, GUMBO_TAG_TBODY);
-        if (tbodies.size() != 2)
+        const QVector<GumboElement*> tds = collectElements(elem, [](GumboElement *e) {
+            return e->tag == GUMBO_TAG_TD && !attributeValue(e, "id").startsWith("bildID");
+        });
+        if (tds.size() != 2)
             continue;
-
-        QStringList names = collectTexts(tbodies[0]);
-        QStringList names2 = collectTexts(tbodies[1]);
+        
+        QStringList names  = collectTexts(tds[0]);
+        QStringList names2 = collectTexts(tds[1]);
 
         if (names.size() != names2.size())
             continue;
